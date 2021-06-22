@@ -1,0 +1,24 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "sshPublicKeys_vm_name": {
+            "value": null
+        },
+        "virtualNetworks_oss_east_vm_name": {
+            "value": null
+        },
+        "virtualMachines_oss_east_vms_name": {
+            "value": null
+        },
+        "networkInterfaces_oss_east_vms694_name": {
+            "value": null
+        },
+        "networkSecurityGroups_oss_east_vms_nsg_name": {
+            "value": null
+        },
+        "virtualNetworks_oss_west_vm_externalid": {
+            "value": null
+        }
+    }
+}

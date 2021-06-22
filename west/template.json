@@ -1,0 +1,285 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "virtualNetworks_oss_west_vm_name": {
+            "defaultValue": "oss-west-vm",
+            "type": "String"
+        },
+        "virtualMachines_oss_west_vms_name": {
+            "defaultValue": "oss-west-vms",
+            "type": "String"
+        },
+        "networkInterfaces_oss_west_vms197_name": {
+            "defaultValue": "oss-west-vms197",
+            "type": "String"
+        },
+        "publicIPAddresses_oss_west_vms_ip_name": {
+            "defaultValue": "oss-west-vms-ip",
+            "type": "String"
+        },
+        "networkSecurityGroups_oss_west_vms_nsg_name": {
+            "defaultValue": "oss-west-vms-nsg",
+            "type": "String"
+        },
+        "virtualNetworks_oss_east_vm_externalid": {
+            "defaultValue": "/subscriptions//resourceGroups/oss-east-rg/providers/Microsoft.Network/virtualNetworks/oss-east-vm",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2020-11-01",
+            "name": "[parameters('networkSecurityGroups_oss_west_vms_nsg_name')]",
+            "location": "westus",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "SSH",
+                        "properties": {
+                            "protocol": "TCP",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "22",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 300,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2020-11-01",
+            "name": "[parameters('publicIPAddresses_oss_west_vms_ip_name')]",
+            "location": "westus",
+            "sku": {
+                "name": "Basic",
+                "tier": "Regional"
+            },
+            "properties": {
+                "ipAddress": "40.112.176.157",
+                "publicIPAddressVersion": "IPv4",
+                "publicIPAllocationMethod": "Dynamic",
+                "idleTimeoutInMinutes": 4,
+                "ipTags": []
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks",
+            "apiVersion": "2020-11-01",
+            "name": "[parameters('virtualNetworks_oss_west_vm_name')]",
+            "location": "westus",
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "172.0.0.0/16"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "subnet-1",
+                        "properties": {
+                            "addressPrefix": "172.0.1.0/24",
+                            "delegations": [],
+                            "privateEndpointNetworkPolicies": "Enabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled"
+                        }
+                    }
+                ],
+                // "virtualNetworkPeerings": [
+                //     {
+                //         "name": "west-east",
+                //         "properties": {
+                //             "peeringState": "Connected",
+                //             "remoteVirtualNetwork": {
+                //                 "id": "[parameters('virtualNetworks_oss_east_vm_externalid')]"
+                //             },
+                //             "allowVirtualNetworkAccess": true,
+                //             "allowForwardedTraffic": true,
+                //             "allowGatewayTransit": false,
+                //             "useRemoteGateways": false,
+                //             "remoteAddressSpace": {
+                //                 "addressPrefixes": [
+                //                     "10.0.0.0/16"
+                //                 ]
+                //             }
+                //         }
+                //     }
+                // ],
+                "enableDdosProtection": false
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2020-12-01",
+            "name": "[parameters('virtualMachines_oss_west_vms_name')]",
+            "location": "westus",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_oss_west_vms197_name'))]"
+            ],
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "Standard_B1ls"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "Canonical",
+                        "offer": "UbuntuServer",
+                        "sku": "18.04-LTS",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "osType": "Linux",
+                        "name": "[concat(parameters('virtualMachines_oss_west_vms_name'), '_OsDisk_1_c26f00d2231d4a979fb63faa9d125a7b')]",
+                        "createOption": "FromImage",
+                        "caching": "ReadWrite",
+                        "managedDisk": {
+                            "storageAccountType": "Premium_LRS"
+                        },
+                        "diskSizeGB": 30
+                    },
+                    "dataDisks": []
+                },
+                "osProfile": {
+                    "computerName": "[parameters('virtualMachines_oss_west_vms_name')]",
+                    "adminUsername": "azureuser",
+                    "linuxConfiguration": {
+                        "disablePasswordAuthentication": true,
+                        "ssh": {
+                            "publicKeys": [
+                                {
+                                    "path": "/home/azureuser/.ssh/authorized_keys",
+                                    "keyData": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC0mN+VTZ0K5sK0uGilqygM69E3\r\nVrfijKX8NVqeIggN4Mi2OmZPS6LGMuUmzhXEe+6IJV8AUN3chxO/aNLYqsNVZwkD\r\n3QQ6LdMVdAp8ntGS6V4yJ5KGYY1AS1zVc5UsBqyyMAvLjOR3IQIfY6CntqGTs3w8\r\nJYIeiPq+PYUDFkGKG1ralXhup/EWQlWfWk5Kfwbt51t3IqD3/O7EJRsAU8yUPvNn\r\n168LcHHPZpNjH+an56J/DA4n+villV2r18/yqPoBWPPyTg+nHxY6yIroHjwW+9gL\r\n/O5Smt+394NOZTP04fZ6Mm9avF20sgJdULA8fRu2EohOVUsISAuYjTMAQDxL4Ckq\r\nJxIqd1tIllNYb2XvUJzQNP/LJN6AziPsgA9CmIS9OZs8DnQkS54dnUdl8dSvE+lu\r\no1Gv/AqKLVef5SHzsKhGTvxti1gFE+r4MgyqX3Jm5W6TtSoOg3tNgqaorwTUg8Jm\r\nkl5cffqrhpAySg5fKP5ach8id8zwbBGt9pLtt6s= generated-by-azure\r\n"
+                                }
+                            ]
+                        },
+                        "provisionVMAgent": true,
+                        "patchSettings": {
+                            "patchMode": "ImageDefault"
+                        }
+                    },
+                    "secrets": [],
+                    "allowExtensionOperations": true
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_oss_west_vms197_name'))]"
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": true
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+            "apiVersion": "2020-11-01",
+            "name": "[concat(parameters('networkSecurityGroups_oss_west_vms_nsg_name'), '/SSH')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_oss_west_vms_nsg_name'))]"
+            ],
+            "properties": {
+                "protocol": "TCP",
+                "sourcePortRange": "*",
+                "destinationPortRange": "22",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "*",
+                "access": "Allow",
+                "priority": 300,
+                "direction": "Inbound",
+                "sourcePortRanges": [],
+                "destinationPortRanges": [],
+                "sourceAddressPrefixes": [],
+                "destinationAddressPrefixes": []
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "apiVersion": "2020-11-01",
+            "name": "[concat(parameters('virtualNetworks_oss_west_vm_name'), '/subnet-1')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_oss_west_vm_name'))]"
+            ],
+            "properties": {
+                "addressPrefix": "172.0.1.0/24",
+                "delegations": [],
+                "privateEndpointNetworkPolicies": "Enabled",
+                "privateLinkServiceNetworkPolicies": "Enabled"
+            }
+        },
+        // {
+        //     "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
+        //     "apiVersion": "2020-11-01",
+        //     "name": "[concat(parameters('virtualNetworks_oss_west_vm_name'), '/west-east')]",
+        //     "dependsOn": [
+        //         "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_oss_west_vm_name'))]"
+        //     ],
+        //     "properties": {
+        //         "peeringState": "Connected",
+        //         "remoteVirtualNetwork": {
+        //             "id": "[parameters('virtualNetworks_oss_east_vm_externalid')]"
+        //         },
+        //         "allowVirtualNetworkAccess": true,
+        //         "allowForwardedTraffic": true,
+        //         "allowGatewayTransit": false,
+        //         "useRemoteGateways": false,
+        //         "remoteAddressSpace": {
+        //             "addressPrefixes": [
+        //                 "10.0.0.0/16"
+        //             ]
+        //         }
+        //     }
+        // },
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2020-11-01",
+            "name": "[parameters('networkInterfaces_oss_west_vms197_name')]",
+            "location": "westus",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_oss_west_vms_ip_name'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_oss_west_vm_name'), 'subnet-1')]",
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_oss_west_vms_nsg_name'))]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAddress": "172.0.1.4",
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_oss_west_vms_ip_name'))]"
+                            },
+                            "subnet": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_oss_west_vm_name'), 'subnet-1')]"
+                            },
+                            "primary": true,
+                            "privateIPAddressVersion": "IPv4"
+                        }
+                    }
+                ],
+                "dnsSettings": {
+                    "dnsServers": []
+                },
+                "enableAcceleratedNetworking": false,
+                "enableIPForwarding": false,
+                "networkSecurityGroup": {
+                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_oss_west_vms_nsg_name'))]"
+                }
+            }
+        }
+    ]
+}
