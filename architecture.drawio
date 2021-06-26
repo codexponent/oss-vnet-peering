@@ -1,0 +1,54 @@
+<mxfile>
+    <diagram id="KHMys3CZ94mv9tA8aFm9" name="Page-1">
+        <mxGraphModel dx="893" dy="478" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="19" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="75" y="323" width="320" height="200" as="geometry"/>
+                </mxCell>
+                <mxCell id="21" value="VNet Peering" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="15" target="19">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="470" y="161"/>
+                            <mxPoint x="470" y="423"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="15" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="75" y="61" width="320" height="200" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="100" y="118" width="180" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="2" value="Azure VM&lt;br&gt;" style="aspect=fixed;html=1;points=[];align=center;image;fontSize=12;image=img/lib/mscae/Virtual_Machine.svg;" vertex="1" parent="1">
+                    <mxGeometry x="110" y="140" width="50" height="46" as="geometry"/>
+                </mxCell>
+                <mxCell id="7" value="Virtual Network East" style="aspect=fixed;html=1;points=[];align=center;image;fontSize=12;image=img/lib/azure2/networking/Virtual_Networks.svg;" vertex="1" parent="1">
+                    <mxGeometry x="310" y="70" width="67" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" value="Subnet: 10.0.1.0" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;" vertex="1" parent="1">
+                    <mxGeometry x="180" y="118" width="100" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="16" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="90" y="378" width="180" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="17" value="Azure VM&lt;br&gt;" style="aspect=fixed;html=1;points=[];align=center;image;fontSize=12;image=img/lib/mscae/Virtual_Machine.svg;" vertex="1" parent="1">
+                    <mxGeometry x="100" y="400" width="50" height="46" as="geometry"/>
+                </mxCell>
+                <mxCell id="18" value="Virtual Network West" style="aspect=fixed;html=1;points=[];align=center;image;fontSize=12;image=img/lib/azure2/networking/Virtual_Networks.svg;" vertex="1" parent="1">
+                    <mxGeometry x="300" y="330" width="67" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="20" value="Subnet: 172.0.1.0" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;" vertex="1" parent="1">
+                    <mxGeometry x="165" y="378" width="110" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="22" value="East US" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;" vertex="1" parent="1">
+                    <mxGeometry x="210" y="241" width="60" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="23" value="West US" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;" vertex="1" parent="1">
+                    <mxGeometry x="210" y="503" width="60" height="20" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
